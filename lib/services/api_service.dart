@@ -15,7 +15,10 @@ import '../models/low_stock.dart';
 
 class ApiService {
  
-  static const String baseUrl = 'https://pointofsale-api.onrender.com';
+  static const String baseUrl = String.fromEnvironment(
+    'API_BASE_URL',
+    defaultValue: 'https://pointofsale-api.onrender.com',
+  );
 
   final _storage = const FlutterSecureStorage();
 
