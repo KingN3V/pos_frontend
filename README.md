@@ -119,7 +119,7 @@ Release APKs are signed with an upload keystore configured in `android/key.prope
 ## How it's built
 
 - **Simple state handling.** Screens are `StatefulWidget`s using `setState`, and every backend call goes through one `ApiService`. For an app this size that keeps the code easy to follow, without a state-management package.
-- **The server is the source of truth.** After a sale, restock, payment or cancellation the screen reloads from the server instead of patching local state, so what she sees is what was actually saved.
+- **The server is the source of truth.** After a sale, restock, payment or cancellation the screen reloads from the server instead of patching local state, so what the owner sees is what was actually saved.
 - **Safe with bad connections.** Money and stock actions close their dialog before the request is sent, so a double tap cannot submit twice. If the connection drops mid-request, the message tells the user to check the order or stock before trying again.
 - **Search that doesn't spam the server.** Customer, balance and sales-history searches are debounced, and the history screen ignores slow replies from a filter the user has already left.
 - **Correct local times.** The backend stores UTC and sends times without a zone; the app marks them as UTC, then converts to the phone's local time.
