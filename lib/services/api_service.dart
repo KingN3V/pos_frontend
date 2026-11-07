@@ -15,9 +15,14 @@ import '../models/low_stock.dart';
 
 class ApiService {
  
+  // Release builds talk to the live API. Debug runs default to a local
+  // backend (run `adb reverse tcp:8000 tcp:8000`), so testing can never touch
+  // real data by accident. Pass --dart-define=API_BASE_URL=... to override.
   static const String baseUrl = String.fromEnvironment(
     'API_BASE_URL',
-    defaultValue: 'https://pointofsale-api.onrender.com',
+    defaultValue: bool.fromEnvironment('dart.vm.product')
+        ? 'https://pointofsale-api.onrender.com'
+        : 'http://localhost:8000',
   );
 
   final _storage = const FlutterSecureStorage();
@@ -56,43 +61,6 @@ class ApiService {
 
   Future<void> logout() async {
     await _storage.deleteAll();
-  }
-
-   /// Calls /auth/register. Returns null on success, or an error message
-  /// to show the user. Throws an exception for network/server errors.
-  Future<String?> register({
-    required String email,
-    required String username,
-    required String firstName,
-    required String lastName,
-    required String password,
-    String? phoneNumber,
-  }) async {
-    final response = await http.post(
-      Uri.parse('$baseUrl/auth/register'),
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({
-        'email': email,
-        'username': username,
-        'first_name': firstName,
-        'last_name': lastName,
-        'password': password,
-        'role': 'admin',
-        if (phoneNumber != null && phoneNumber.isNotEmpty)
-          'phone_number': phoneNumber,
-      }),
-    );
-
-    if (response.statusCode == 201) {
-      return null;
-    } else if (response.statusCode == 400) {
-      final data = jsonDecode(response.body);
-      return data['detail'] as String;
-    } else if (response.statusCode == 422) {
-      return 'Please check your details (is the email valid?)';
-    } else {
-      throw Exception('Registration failed: ${response.statusCode} ${response.body}');
-    }
   }
 
   /// Calls /auth/forgot-password. Always returns null on a 200 (the backend

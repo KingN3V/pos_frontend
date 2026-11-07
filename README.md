@@ -97,17 +97,19 @@ flutter pub get
 flutter run
 ```
 
-**By default the app talks to the live API.** A plain `flutter run` points at the production backend, so anything you create is created there. To use your own backend instead, pass its address at build time:
-
-```bash
-flutter run --dart-define=API_BASE_URL=http://<your-ip>:8000
-```
+**Debug runs talk to a local backend; release builds talk to the live API.** A plain `flutter run` (debug mode) points at `http://localhost:8000`, so testing can never touch real shop data by accident. Release builds (`flutter build apk --release`, or `flutter run --release`) point at the production backend.
 
 With a phone connected over USB you can reach a backend running on your computer without sharing a network:
 
 ```bash
 adb reverse tcp:8000 tcp:8000
-flutter run --dart-define=API_BASE_URL=http://localhost:8000
+flutter run
+```
+
+To point the app at any other backend, in any mode, pass its address at build time. This overrides the defaults above:
+
+```bash
+flutter run --dart-define=API_BASE_URL=http://<your-ip>:8000
 ```
 
 Start the backend as described in the [backend README](https://github.com/KingN3V/PointOfSale#running-locally). Registration is closed on the API, so you need a user created directly in the database to log in.
