@@ -15,9 +15,14 @@ import '../models/low_stock.dart';
 
 class ApiService {
  
+  // Release builds talk to the live API. Debug runs default to a local
+  // backend (run `adb reverse tcp:8000 tcp:8000`), so testing can never touch
+  // real data by accident. Pass --dart-define=API_BASE_URL=... to override.
   static const String baseUrl = String.fromEnvironment(
     'API_BASE_URL',
-    defaultValue: 'https://pointofsale-api.onrender.com',
+    defaultValue: bool.fromEnvironment('dart.vm.product')
+        ? 'https://pointofsale-api.onrender.com'
+        : 'http://localhost:8000',
   );
 
   final _storage = const FlutterSecureStorage();
